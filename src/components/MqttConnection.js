@@ -3,11 +3,6 @@ import { Card, Button, Form, Input, Row, Col } from "antd";
 
 const MqttConnection = ({ connect, disconnect, connectBtn }) => {
   const [form] = Form.useForm();
-  const initialConnectionOptions = {
-    host: "broker.emqx.io",
-    clientId: "test" + Math.random().toString(16).substring(2, 8),
-    port: 8083,
-  };
 
   const onFinish = ({ host, clientId, port }) => {
     const url = `ws://${host}:${port}/mqtt`;
@@ -29,23 +24,17 @@ const MqttConnection = ({ connect, disconnect, connectBtn }) => {
   };
 
   return (
-    <Card
-      title="Connection"
-      actions={[
-        <Button type="primary" onClick={handleConnect}>
-          {connectBtn}
-        </Button>,
-        <Button danger onClick={handleDisconnect}>
-          Disconnect
-        </Button>,
-      ]}
-    >
+    <Card title="Connection">
       <Form
         layout="vertical"
         name="basic"
         form={form}
-        initialValues={initialConnectionOptions}
         onFinish={onFinish}
+        initialValues={{
+          host: "broker.emqx.io",
+          clientId: "test" + Math.random().toString(16).substring(2, 8),
+          port: 8083,
+        }}
       >
         <Row gutter={20}>
           <Col span={8}>
@@ -62,6 +51,14 @@ const MqttConnection = ({ connect, disconnect, connectBtn }) => {
             <Form.Item label="Client ID" name="clientId">
               <Input />
             </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Button type="primary" onClick={handleConnect}>
+              {connectBtn}
+            </Button>
+            <Button style={{ marginLeft: 10 }} onClick={handleDisconnect}>
+              Disconnect
+            </Button>
           </Col>
         </Row>
       </Form>

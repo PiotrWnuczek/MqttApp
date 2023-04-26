@@ -1,15 +1,8 @@
-import React, { useContext } from "react";
-import { Card, Form, Input, Row, Col, Button, Select } from "antd";
-import { QosOption } from "./MqttModule";
+import React from "react";
+import { Card, Form, Input, Row, Col, Button } from "antd";
 
 const MqttPublisher = ({ publish }) => {
   const [form] = Form.useForm();
-  const qosOptions = useContext(QosOption);
-
-  const record = {
-    topic: "testtopic/react",
-    qos: 0,
-  };
 
   const onFinish = (values) => {
     publish(values);
@@ -21,18 +14,15 @@ const MqttPublisher = ({ publish }) => {
         layout="vertical"
         name="basic"
         form={form}
-        initialValues={record}
         onFinish={onFinish}
+        initialValues={{
+          topic: "testtopic/react",
+        }}
       >
         <Row gutter={20}>
-          <Col span={12}>
+          <Col span={24}>
             <Form.Item label="Topic" name="topic">
               <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="QoS" name="qos">
-              <Select options={qosOptions} />
             </Form.Item>
           </Col>
           <Col span={24}>
@@ -40,7 +30,7 @@ const MqttPublisher = ({ publish }) => {
               <Input.TextArea />
             </Form.Item>
           </Col>
-          <Col span={8} offset={16} style={{ textAlign: "right" }}>
+          <Col span={8}>
             <Form.Item>
               <Button type="primary" htmlType="submit">
                 Publish

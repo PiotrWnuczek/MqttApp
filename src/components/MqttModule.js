@@ -1,26 +1,10 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Space } from "antd";
 import MqttConnection from "./MqttConnection";
 import MqttPublisher from "./MqttPublisher";
 import MqttSubscriber from "./MqttSubscriber";
 import MqttReceiver from "./MqttReceiver";
 import mqtt from "mqtt/dist/mqtt";
-
-export const QosOption = createContext([]);
-const qosOption = [
-  {
-    label: "0",
-    value: 0,
-  },
-  {
-    label: "1",
-    value: 1,
-  },
-  {
-    label: "2",
-    value: 2,
-  },
-];
 
 const MqttModule = () => {
   const [client, setClient] = useState(null);
@@ -80,9 +64,9 @@ const MqttModule = () => {
     }
   };
 
-  const mqttSub = ({ topic, qos }) => {
+  const mqttSub = ({ topic }) => {
     if (client) {
-      client.subscribe(topic, { qos }, (error) => {
+      client.subscribe(topic, 0, (error) => {
         if (error) {
           console.log("Subscribe to topics error", error);
           return;
@@ -93,9 +77,9 @@ const MqttModule = () => {
     }
   };
 
-  const mqttUnSub = ({ topic, qos }) => {
+  const mqttUnSub = ({ topic }) => {
     if (client) {
-      client.unsubscribe(topic, { qos }, (error) => {
+      client.unsubscribe(topic, 0, (error) => {
         if (error) {
           console.log("Unsubscribe error", error);
           return;
@@ -107,22 +91,20 @@ const MqttModule = () => {
   };
 
   return (
-    <QosOption.Provider value={qosOption}>
-      <Space
-        direction="vertical"
-        size={20}
-        style={{ display: "flex", padding: 20 }}
-      >
-        <MqttConnection
-          connect={mqttConnect}
-          disconnect={mqttDisconnect}
-          connectBtn={connectStatus}
-        />
-        <MqttSubscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />
-        <MqttPublisher publish={mqttPublish} />
-        <MqttReceiver payload={payload} />
-      </Space>
-    </QosOption.Provider>
+    <Space
+      direction="vertical"
+      size={20}
+      style={{ display: "flex", padding: 20 }}
+    >
+      <MqttConnection
+        connect={mqttConnect}
+        disconnect={mqttDisconnect}
+        connectBtn={connectStatus}
+      />
+      <MqttSubscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />
+      <MqttPublisher publish={mqttPublish} />
+      <MqttReceiver payload={payload} />
+    </Space>
   );
 };
 
