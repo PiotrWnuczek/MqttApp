@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import { Space } from "antd";
 import MqttConnection from "./MqttConnection";
 import MqttPublisher from "./MqttPublisher";
 import MqttSubscriber from "./MqttSubscriber";
@@ -69,9 +70,8 @@ const MqttModule = () => {
     }
   };
 
-  const mqttPublish = (context) => {
+  const mqttPublish = ({ topic, qos, payload }) => {
     if (client) {
-      const { topic, qos, payload } = context;
       client.publish(topic, payload, { qos }, (error) => {
         if (error) {
           console.log("Publish error: ", error);
@@ -80,9 +80,8 @@ const MqttModule = () => {
     }
   };
 
-  const mqttSub = (subscription) => {
+  const mqttSub = ({ topic, qos }) => {
     if (client) {
-      const { topic, qos } = subscription;
       client.subscribe(topic, { qos }, (error) => {
         if (error) {
           console.log("Subscribe to topics error", error);
@@ -94,9 +93,8 @@ const MqttModule = () => {
     }
   };
 
-  const mqttUnSub = (subscription) => {
+  const mqttUnSub = ({ topic, qos }) => {
     if (client) {
-      const { topic, qos } = subscription;
       client.unsubscribe(topic, { qos }, (error) => {
         if (error) {
           console.log("Unsubscribe error", error);
@@ -109,18 +107,22 @@ const MqttModule = () => {
   };
 
   return (
-    <>
-      <MqttConnection
-        connect={mqttConnect}
-        disconnect={mqttDisconnect}
-        connectBtn={connectStatus}
-      />
-      <QosOption.Provider value={qosOption}>
+    <QosOption.Provider value={qosOption}>
+      <Space
+        direction="vertical"
+        size={20}
+        style={{ display: "flex", padding: 20 }}
+      >
+        <MqttConnection
+          connect={mqttConnect}
+          disconnect={mqttDisconnect}
+          connectBtn={connectStatus}
+        />
         <MqttSubscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />
         <MqttPublisher publish={mqttPublish} />
-      </QosOption.Provider>
-      <MqttReceiver payload={payload} />
-    </>
+        <MqttReceiver payload={payload} />
+      </Space>
+    </QosOption.Provider>
   );
 };
 
